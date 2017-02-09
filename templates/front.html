@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>/ascii/</title>
+  </head>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      width:  800px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    .error{
+      color: red;
+    }
+
+    label{
+      display: block;;
+      font-size: 20px;
+    }
+
+    input[type=text]{
+      width: 400px;
+      font-size: 20px;
+      padding: 2px
+    }
+
+    textarea {
+      width: : 400px;
+      height: 200px;
+      font-size: 17px;
+      font-family: monospace;
+    }
+
+    input[type=submit]{
+      font-size: 24px;
+    }
+
+    hr {
+      margin: 2opx auto;
+    }
+
+    art + .art {
+      margin-top: 20px;
+    }
+
+    .art-title {
+      font-weight: bold;
+      font-size: 17px;
+    }
+
+    .art-body {
+      margin: 0;
+      font-size: 17px;
+    }
+  </style>
+
+  <body>
+    <h1>Build a Blog</h1>
+
+<!-- Initially no action bc we're submitting form to ourselves. -->
+<!-- value={{title}} preserves user's input of title if form is re-rendered. -->
+<!-- {{art}} preserves user's art if form is re-rerendered. -->
+<!-- {{error}} is the placeholder for error message; template syntax. -->
+    <form method="post">
+      <label>
+        <div>Title</div>
+        <input type="text" name="title" value="{{title}}">
+      </label>
+
+      <label>
+        <div>Blog</div>
+        <textarea name="blog">{{blog}}</textarea>
+      </label>
+      <div class="error">{{error}}</div>
+      <input type="submit">
+    </form>
+
+    <!-- Add the art work -->
+     <!-- <hr> just creates a line. -->
+
+    <hr>
+<!-- Python code for a for loop -->
+    {% for blog in blogs %}
+      <div class="art">
+        <div class="art-title">{{blog.title}}</div>
+        <pre class="art-body">{{blog.blog}}</pre>
+      </div>
+    {% endfor %}
+
+  </body>
+</html>
