@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <!-- Display the blogs -->
+     <!-- <hr> just creates a line. -->
+
+    <hr>
+<!-- Python code for a for loop -->
+    {% for blog in blogs %}
+      <div class="art">
+        <div class="art-title">{{blog.title}}</div>
+        <pre class="art-body">{{blog.blog}}</pre>
+      </div>
+    {% endfor %}
+
+    {% endblock %}

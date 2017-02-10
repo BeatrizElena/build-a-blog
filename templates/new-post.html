@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+ <!-- <hr> just creates a line. -->
+<hr>
+
+<!-- Initially no action bc we're submitting form to ourselves. -->
+<!-- value={{title}} preserves user's input of title if form is re-rendered. -->
+<!-- {{art}} preserves user's art if form is re-rerendered. -->
+<!-- {{error}} is the placeholder for error message; template syntax. -->
+    <form method="post">
+      <label>
+        <div>Title</div>
+        <input type="text" name="title" value={{title}}>
+      </label>
+
+      <label>
+        <div>Blog</div>
+        <textarea name="blog">{{blog}}</textarea>
+      </label>
+      <div class="error">{{error}}</div>
+      <input type="submit">
+    </form>
+
+    <!-- Add the art work -->
+     <!-- <hr> just creates a line. -->
+
+    <hr>
+
+{% endblock %}

@@ -49,21 +49,32 @@ class Blog(db.Model):
     blog = db.TextProperty(required = True) # TextProperty allows for more characters that StringProperty
     created = db.DateTimeProperty(auto_now_add = True) # auto_now_add=true sets the time every time an instance of the entity is created.
 
-class MainPage(Handler):
+class Index(Handler):
+    def get(self, title="", blog=""):
+        # t = jinja_env.get_template("frontpage.html")
+        # content = t.render()
+        # self.response.write(content)
+
+        blogs = db.GqlQuery("SELECT * FROM Blog " "ORDER BY created DESC " "LIMIT 5")
+        # then we have to pass "blogs" to the frontpage.html template in order to populate the page with the blogs
+        self.render("frontpage.html", title=title, blog=blog, blogs=blogs)
+
+class NewPost(Handler):
     def render_front(self, title="", blog="", error=""):
         # write the code, including the sql, to access the database.
         # This code creates a cursor "blogs" which is just a pointer to the results.
-        blogs = db.GqlQuery("SELECT * FROM Blog " "ORDER BY created DESC ")
-        # then we have to pass "blogs" to the front.html template in order to populate the page with the blogs
-        self.render("front.html", title=title, blog=blog, error=error, blogs=blogs)
+        blogs = db.GqlQuery("SELECT * FROM Blog " "ORDER BY created DESC " "LIMIT 5")
+        # then we have to pass "blogs" to the frontpage.html template in order to populate the page with the blogs
+        self.render("new-post.html", title=title, blog=blog, error=error, blogs=blogs)
 
     # call render-front() fx with no parameters to render blank form.
     def get(self):
         # self.write('asciichan!') #writes asciichan! to the browser
-        # self.render("front.html")  # renders the front.html file to the browser
-        # call render_front() fx with no parameters to render blank form.
+        # self.render("frontpage.html")  # renders the frontpage.html file to the browser
+        # call render_front() fx (with no parameters if we wanted to render form blank)
+        # blogs = db.GqlQuery("SELECT * FROM Blog " "ORDER BY created DESC " "LIMIT 5")
+        # title = db.GqlQuery("SELECT * FROM Blog " "ORDER BY created DESC " "LIMIT 5")
         self.render_front()
-
     # function to deal with form handling
     def post(self):
         # get parameters out of the request
@@ -80,24 +91,18 @@ class MainPage(Handler):
             a = Blog(title=title, blog=blog)
             # store b (the Blog object) in the database
             a.put()
-
-            # to avoid the browser's reload message, create a redirect to within the same page,
-            # below the submit boxes.
             self.redirect("/")
-            # (we should see the title and art submitted below the submit boxes,
-            # but only after adding space for it in our html form)
-
-
 
         else:
-            error = "we need both a title and a blog entry!"
+            error = "We need both a title and a blog entry!"
             # re-render the form, passing the error above into the form
-            # self.render("front.html", error = error)
-            # call render_front() fx with the error parameter to render form with error message.
             # include title and blog parameters bc we want to retain those inputs for the user
             # when we re-render the form.
             self.render_front(title, blog, error)
 
+
+
 app = webapp2.WSGIApplication([
-    ('/', MainPage)
+    ('/', Index),
+    ('/newpost', NewPost)
 ], debug=True)
