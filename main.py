@@ -100,9 +100,16 @@ class NewPost(Handler):
             # when we re-render the form.
             self.render_front(title, blog, error)
 
+class ViewPostHandler(Handler):
+    def get(self, id):
+        # id = db.GqlQuery("SELECT * FROM Blog ")
+        # id = self.request.get("/blog/<id:\d+>")
+        self.response.write('%s' % id)
+
 
 
 app = webapp2.WSGIApplication([
     ('/', Index),
-    ('/newpost', NewPost)
+    ('/newpost', NewPost),
+    (webapp2.Route('/blog/<id:\d+>', ViewPostHandler))
 ], debug=True)
