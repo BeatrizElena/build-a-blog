@@ -1,19 +1,5 @@
 #!/usr/bin/env python
 #
-# Copyright 2007 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
 import os
 import webapp2
 import jinja2
@@ -39,8 +25,10 @@ class Handler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
-# Create entity (i.e class)(equivalent to table in sql)
-# class inherits from db.Model(), included with: from google.appengine.ext import db
+# Create entity (equivalent to table in sql)
+# entities are created by creating a class.
+# class inherits from db.Model()
+# db.Model is included from google. We import it with: from google.appengine.ext import db
 class Blog(db.Model):
     # 1st thing to do is define the type entities. (or the data types of the columns; in sql)
     title = db.StringProperty(required = True) # required=true sets a constrain for our db creation
@@ -72,9 +60,12 @@ class NewPost(Handler):
 
     # call render-front() fx with no parameters to render blank form.
     def get(self):
-        # call render_front() fx (with no parameters to render form blank)
+        # self.write('asciichan!') #writes asciichan! to the browser
+        # self.render("frontpage.html")  # renders the frontpage.html file to the browser
+        # call render_front() fx (with no parameters if we wanted to render form blank)
+        # blogs = db.GqlQuery("SELECT * FROM Blog " "ORDER BY created DESC " "LIMIT 5")
+        # title = db.GqlQuery("SELECT * FROM Blog " "ORDER BY created DESC " "LIMIT 5")
         self.render_front()
-
     # function to deal with form handling
     def post(self):
         # get parameters out of the request
@@ -83,33 +74,44 @@ class NewPost(Handler):
 
         # add error handling code
         if title and blog:
+            # initial response to see that initial form and error messages are working.
+            # self.write("thanks!")
             # create an instance of the Blog entity (i.e create an instance of the Blog table).
-            b = Blog(parent = None, title=title, blog=blog)#???
+            # will call the instance b, and will only pass the title and blog parameters.
+            # we don't pass the created parameter bc it's created automatically.
+            # b = Blog(parent = blog_key(), title=title, blog=blog)#???
             # store b (the Blog object) in the database
-            b.put()
+            # b.put()
+            b = Blog(id, title=title, blog=blog)#???
+            # b.put()
             id = b.key().id()
             id = Blog.get_by_id(id, parent=None)
             id = b.key().id()
-            # b = Blog(id, title=title, blog=blog)#???
             # id = Blog.get_by_id(id, parent=None)
             # self.redirect("/blog?id=%s" % id)
-            blog = str(b.key().id())
-            # self.redirect('/blog/%s' %str(b.key().id()))
-            # self.redirect('/blog/?blog=%s' % blog)
-            self.response.write("I want to see a single blog!!")
+            self.redirect('/blog/%s' %str(b.key().id()))
             # self.redirect('/welcome?username=%s' % username)
+
         else:
             error = "We need both a title and a blog entry!"
             # re-render the form, passing the error above into the form
-            # include title and blog parameters bc we want to retain those when we re-render the form.
+            # include title and blog parameters bc we want to retain those inputs for the user
+            # when we re-render the form.
             self.render_front(title, blog, error)
 
 class ViewPostHandler(Handler):
+    # cant' tell is single_post fx is working
+    # def single_post(blog, id):
+    #     # id = self.request.get("id")
+    #     single = Blog.get_by_id(int(id))
+    #     if single and not single.deleted:
+    #         return single
+
     def get(self, id):
-        id = Blog.get_by_id(int(id))
-        # if id:
-        #     return id
-        self.response.write(id)
+        single = Blog.get_by_id(int(id))
+        # if single:
+        #     return single
+        self.response.write(single)
         # else:
             # error = "There are no blogs with the ID!"
             # self.response.write(error)
@@ -130,21 +132,6 @@ class ViewPostHandler(Handler):
         # parent
         # The parent entity for the requested entities, as a model or key, or None (the default) if the requested entities do not have a parent.
         # Multiple entities requested by one call must all have the same parent.
-
-        # create an instance of the Blog entity (i.e create an instance of the Blog table).
-        # will call the instance b, and will only pass the title and blog parameters.
-        # we don't pass the created parameter bc it's created automatically.
-        # b = Blog(parent = blog_key(), title=title, blog=blog)#???
-        # store b (the Blog object) in the database
-        # b.put()
-        # b = Blog(id, title=title, blog=blog)#???
-        # # b.put()
-        # id = b.key().id()
-        # id = Blog.get_by_id(id, parent=None)
-        # id = b.key().id()
-        # id = Blog.get_by_id(id, parent=None)
-        # self.redirect("/blog?id=%s" % id)
-
 
 
 app = webapp2.WSGIApplication([
