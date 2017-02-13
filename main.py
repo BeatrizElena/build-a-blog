@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 import os
+import re
+import string
 import webapp2
 import jinja2
 
@@ -50,6 +52,10 @@ class Blog(db.Model):
     # b.put()
     # id = b.key().id()
     # id = Blog.get_by_id(id, parent=None)
+def entry_key(self):
+    id = int(self.request.get('id'))
+    blog = Blog.get(db.Key.from_path('entries', id))
+    return blog
 
 class Index(Handler):
     def get(self, title="", blog=""):
@@ -83,20 +89,23 @@ class NewPost(Handler):
 
         # add error handling code
         if title and blog:
+            # To have Cloud Datastore assign a numeric ID automatically, omit the key_name argument:
+            # Create an entity with a key such as Employee:8261.
+            # employee = Employee()
             # create an instance of the Blog entity (i.e create an instance of the Blog table).
-            b = Blog(parent = None, title=title, blog=blog)#???
+            b = Blog(parent = entry_key(), title=title, blog=blog)#???
             # store b (the Blog object) in the database
             b.put()
-            id = b.key().id()
-            id = Blog.get_by_id(id, parent=None)
-            id = b.key().id()
-            # b = Blog(id, title=title, blog=blog)#???
+            # id = b.key().id()
             # id = Blog.get_by_id(id, parent=None)
+            # id = b.key().id()
+            # b = Blog(id, title=title, blog=blog)#???
+            id = str(Blog.get_by_id(id, parent=None))
             # self.redirect("/blog?id=%s" % id)
-            blog = str(b.key().id())
+            # blog = str(b.key().id())
             # self.redirect('/blog/%s' %str(b.key().id()))
-            # self.redirect('/blog/?blog=%s' % blog)
-            self.response.write("I want to see a single blog!!")
+            self.redirect('/blog/%s' % id)
+            # self.response.write("I want to see a single blog!!")
             # self.redirect('/welcome?username=%s' % username)
         else:
             error = "We need both a title and a blog entry!"
