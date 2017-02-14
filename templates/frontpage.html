@@ -2,6 +2,7 @@
 
 {% block content %}
 
+<!-- frontpage.html -->
     <!-- Display the blogs -->
      <!-- <hr> just creates a line. -->
 
@@ -9,7 +10,10 @@
 <!-- Python code for a for loop -->
     {% for blog in blogs %}
       <div class="art">
-        <div class="art-title">{{blog.title}}</div>
+        <!-- <div class="art-title"><a href="blog.key().id()">{{blog.title}}</a></div> -->
+        <!-- <div class="art-title"><a href="/blog/%s' % str(blog.key().id())">{{blog.title}}</a></div> -->
+        <div class="art-title"><a href="/blog/{{blog.key().id()}}">{{blog.title}}</a></div>
+        <!-- <div class="art-title"><a href="/blog/%s' % blog.key().id().blog">{{blog.title}}</a></div> -->
         <pre class="art-body">{{blog.blog}}</pre>
       </div>
     {% endfor %}
